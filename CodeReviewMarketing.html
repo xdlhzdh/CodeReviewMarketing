@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Promotion Animation</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: #1a1a2e;
+            color: white;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #scene-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        #text-overlay {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 12px;
+            max-width: 80%;
+            animation: fadeIn 2s forwards;
+            backdrop-filter: blur(5px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        #text-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        h1 {
+            font-size: clamp(1.5rem, 5vw, 3.5rem);
+            margin: 0;
+            color: #ffc629;
+            font-weight: 800;
+        }
+
+        p {
+            font-size: clamp(1rem, 2.5vw, 1.5rem);
+            margin: 0;
+            font-weight: 300;
+            line-height: 1.6;
+        }
+
+        .cta-button {
+            display: inline-block;
+            margin-top: 25px;
+            padding: 12px 24px;
+            font-size: clamp(1rem, 2.5vw, 1.25rem);
+            font-weight: bold;
+            text-decoration: none;
+            color: #1a1a2e;
+            background-color: #ffc629;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            background-color: #ffd86e;
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            #text-overlay {
+                max-width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="scene-container"></div>
+    <div id="text-overlay">
+        <div id="text-content">
+            <h1>Tired of Copilot Review?</h1>
+            <p>We've got you covered! Our website automates code reviews and uploads results directly to Confluence.</p>
+            <a href="https://gpt-review.int.nokia-sbell.com/" class="cta-button">Experience Now</a>
+        </div>
+    </div>
+
+    <!-- Importing three.js library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // Execute the Three.js animation after the page loads
+        window.onload = function() {
+            // Set up the scene, camera, and renderer
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setClearColor(0x000000, 0); // Transparent background
+            document.getElementById('scene-container').appendChild(renderer.domElement);
+
+            // Create and add a point light
+            const pointLight = new THREE.PointLight(0xffffff, 1);
+            pointLight.position.set(0, 0, 10);
+            scene.add(pointLight);
+
+            // Create an ambient light
+            const ambientLight = new THREE.AmbientLight(0x404040); // Soft white light
+            scene.add(ambientLight);
+
+            // Create a set of particles
+            const particles = [];
+            const particleCount = 500;
+            const geometry = new THREE.SphereGeometry(0.1, 8, 8); // Simple sphere geometry
+            const material = new THREE.MeshStandardMaterial({ color: 0x8a2be2, emissive: 0x8a2be2, emissiveIntensity: 0.5 }); // Purple glowing material
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = new THREE.Mesh(geometry, material);
+                // Random position to form a sphere
+                particle.position.set(
+                    (Math.random() - 0.5) * 20,
+                    (Math.random() - 0.5) * 20,
+                    (Math.random() - 0.5) * 20
+                );
+                particle.userData.velocity = new THREE.Vector3(
+                    (Math.random() - 0.5) * 0.05,
+                    (Math.random() - 0.5) * 0.05,
+                    (Math.random() - 0.5) * 0.05
+                );
+                particles.push(particle);
+                scene.add(particle);
+            }
+
+            camera.position.z = 15;
+
+            // Animation loop
+            const animate = function () {
+                requestAnimationFrame(animate);
+
+                // Update particle positions and animation
+                particles.forEach(p => {
+                    p.position.add(p.userData.velocity);
+                    // If the particle goes out of bounds, reset its position
+                    if (p.position.length() > 15) {
+                        p.position.set(
+                            (Math.random() - 0.5) * 20,
+                            (Math.random() - 0.5) * 20,
+                            (Math.random() - 0.5) * 20
+                        );
+                        // Re-assign a random velocity
+                        p.userData.velocity.set(
+                            (Math.random() - 0.5) * 0.05,
+                            (Math.random() - 0.5) * 0.05,
+                            (Math.random() - 0.5) * 0.05
+                        );
+                    }
+                });
+
+                // Rotate objects in the scene
+                scene.rotation.x += 0.0005;
+                scene.rotation.y += 0.001;
+
+                renderer.render(scene, camera);
+            };
+
+            animate();
+
+            // Window resizing
+            window.addEventListener('resize', onWindowResize, false);
+
+            function onWindowResize() {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            }
+        }
+    </script>
+</body>
+</html>
